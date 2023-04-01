@@ -1,0 +1,6 @@
+requests
+pymysql
+fastapi
+uvicorn
+sqlalchemy
+loguru

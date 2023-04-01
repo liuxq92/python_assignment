@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWD}
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    command:
+      --max_connections=1000
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-authentication-plugin=mysql_native_password
+
+  financial:
+    image: financial_image:v1
+    restart: always
+    ports:
+      - 5000:8000
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWD: ${MYSQL_PASSWD}
+    command: /bin/bash -c "cd /opt/python_assignment/financial && uvicorn main:app --reload --port 8000 --host 0.0.0.0"
